@@ -1,0 +1,28 @@
+<%- include('../partials/admin-header') %>
+<body>
+  <div class="content">
+    <h2>Alumni List</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Batch Year</th>
+          <th>Department</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% alumni.forEach(alumnus => { %>
+          <tr>
+            <td><%= alumnus.prn %></td>
+            <td><%= alumnus.name %></td>
+            <td><%= alumnus.email %></td>
+            <td><%= alumnus.batch_year %></td>
+            <td><%= alumnus.department %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <%- include('../partials/admin-footer') %>
+</body>

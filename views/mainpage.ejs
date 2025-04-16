@@ -1,0 +1,32 @@
+<%- include('partials/mainheader.ejs') %>
+<body>
+    <div class="container">
+        <h2>Select Your Role</h2>
+        <div class="cards">
+            <div class="card" onclick="redirectTo('student_login')">
+                <img src="img/student.jpg" alt="Student">
+                <h3>Student</h3>
+                <p>Access student features.</p>
+                <button>Select</button>
+            </div>
+            <div class="card" onclick="redirectTo('alumni_login')">
+                <img src="img/alumni.jpg" alt="Alumni">
+                <h3>Alumni</h3>
+                <p>Connect and share experiences.</p>
+                <button>Select</button>
+            </div>
+            <div class="card" onclick="redirectTo('admin_login')">
+                <img src="img/admin.jpg" alt="Admin">
+                <h3>Admin</h3>
+                <p>Manage platform settings.</p>
+                <button>Select</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function redirectTo(route) {
+            window.location.href = `/${route}`;
+        }
+    </script>
+    <%- include('partials/mainfooter.ejs') %>

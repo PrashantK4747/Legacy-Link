@@ -1,0 +1,290 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #f4f4f4;
+    height: 100vh; /* Ensure the body fills the screen */
+}
+
+/* Form Styles */
+.form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .submit-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #2980b9;
+  }
+  
+  /* Table Styles */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2E3A59;
+    padding: 20px;
+    box-sizing: border-box;
+    border-right: 1px solid #ddd;
+    height: 100vh; /* Full height of the viewport */
+    color: white;
+    flex-shrink: 0; /* Prevent the sidebar from shrinking */
+    position: fixed; /* Fix the sidebar to the left */
+    top: 0;
+    left: 0;
+    overflow-y: auto; /* Add scrolling for long content */
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.6em;
+    color: #eedfdf;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    color: #eedfdf;
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 8px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #34495e;
+}
+
+/* Content */
+.content {
+    margin-left: 250px; /* Add margin to account for the sidebar width */
+    padding: 20px;
+    flex-grow: 1; /* Allow the content to grow and fill the remaining space */
+    box-sizing: border-box;
+}
+
+/* Header */
+.header {
+    padding: 20px;
+    background-color: #34495e;
+    color: white;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header .admin-actions {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.header .admin-actions span {
+    font-size: 14px;
+    color: #bdc3c7;
+}
+
+.header .admin-actions a {
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.header .admin-actions a:hover {
+    text-decoration: underline;
+}
+
+/* College Details */
+.college-details {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.college-details h4 {
+    font-size: 16px;
+    color: #7f8c8d;
+}
+
+.college-details h2 {
+    font-size: 22px;
+    color: #2c3e50;
+}
+
+.college-details p {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap; /* Allow stats to wrap on smaller screens */
+}
+
+.stat-card {
+    background-color: #3498db;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 10px; /* Add spacing between cards */
+}
+
+.stat-card h3 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.stat-card p {
+    font-size: 14px;
+    margin: 5px 0 0;
+}
+
+/* Charts Section */
+.charts {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap; /* Allow charts to wrap on smaller screens */
+}
+
+.chart {
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+}
+
+.chart h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.chart img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Reduce sidebar width on smaller screens */
+    }
+
+    .sidebar h2 {
+        font-size: 1.4em;
+    }
+
+    .sidebar ul li a {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .content {
+        margin-left: 200px; /* Adjust content margin for smaller sidebar */
+    }
+
+    .stat-card {
+        width: 120px; /* Reduce card size on smaller screens */
+        padding: 15px;
+    }
+
+    .chart {
+        width: 100%; /* Make charts full-width on smaller screens */
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        display: none; /* Hide sidebar on very small screens */
+    }
+
+    .content {
+        margin-left: 0; /* Remove margin when sidebar is hidden */
+    }
+
+    .dashboard-stats {
+        justify-content: center; /* Center stats on small screens */
+    }
+
+    .stat-card {
+        width: 100%; /* Make cards full-width on small screens */
+        max-width: 300px;
+    }
+}

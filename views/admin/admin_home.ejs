@@ -1,0 +1,57 @@
+<%- include('../partials/admin-header') %>
+<body>
+    <div id="sidebox" class="sidebar">
+        <h2>LegacyLink</h2>
+        <ul>
+            <li><a href="/admin_home">Dashboard</a></li>
+            <li>Lists
+                <ul>
+                    <li><a href="/students_list">Students List</a></li>
+                    <li><a href="/alumni_list">Alumni List</a></li>
+                    <li><a href="#">Event List</a></li>
+                </ul>
+            </li>
+            <li>Add Elements
+                <ul>
+                    <li><a href="/add_student">Add Student</a></li>
+                    <li><a href="/add_alumni">Add Alumni</a></li>
+                    <li><a href="#">Add Event</a></li>
+                </ul>
+            </li>
+            <li><a href="/import_students">Import</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <div class="admin-actions">
+                <span>Welcome, Admin</span> | <a href="/">Log out</a>
+            </div>
+            <div class="college-details">
+                <h4>Shree Warana Vibhag Shikshan Mandal's</h4>
+                <h2>Tatyasaheb Kore Institute of Engineering and Technology, Warananagar</h2>
+                <p>Two times NBA Accredited, 'A' Grade by NAAC<br>
+                    Five times consecutively in platinum category institute ratings by AICTE CII survey
+                </p>
+                <p><b>An Autonomous Institute</b></p>
+            </div>
+        </div>
+
+        <div class="dashboard-stats">
+            <div id="box1" class="stat-card">
+                <h3><%= alumniCount %></h3>
+                <p>ALUMNI</p>
+            </div>
+            <div id="box1" class="stat-card">
+                <h3><%= studentCount %></h3>
+                <p>STUDENTS</p>
+            </div>
+            <div id="box1" class="stat-card">
+                <h3><%= postCount %></h3>
+                <p>POSTS</p>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/admin-footer') %>
+</body>

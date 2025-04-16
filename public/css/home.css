@@ -1,0 +1,310 @@
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .comments-container {
+            max-height: 0;
+            overflow-y: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            border: 1px solid #ccc;
+            padding: 0;
+          }
+          
+          .view-comments-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+          }
+          
+          .view-comments-button:hover {
+            background-color: #0056b3;
+          }
+.comment {
+    margin-bottom: 10px;
+}
+
+.like-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.like-button:hover {
+    background-color: #0056b3;
+}
+
+        .logout-form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .logout-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .logout-button:hover {
+            background-color: #c0392b;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #004466;
+            color: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 5px solid #002233;
+            position: relative;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.2rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        header h1:hover {
+            color: #cce7ff;
+        }
+        header span {
+            font-size: 1.2rem;
+            color: #cce7ff;
+        }
+        /* Profile Sidebar */
+        .profile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #00334d;
+            color: white;
+            padding-top: 2rem;
+            transition: right 0.3s ease;
+            z-index: 9999;
+        }
+        .profile-sidebar h2 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .profile-sidebar p {
+            text-align: center;
+            color: #cccccc;
+            margin-bottom: 1.5rem;
+        }
+        .profile-sidebar .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-image: url('profile-pic.jpg'); /* Add your image here */
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            cursor: pointer;
+        }
+        /* Menu Sidebar */
+        .menu-bar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #00334d;
+            color: white;
+            transition: left 0.3s ease;
+            padding-top: 2rem;
+            z-index: 9998;
+        }
+        .menu-bar a {
+            display: block;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #004d66;
+        }
+        .menu-bar a:hover {
+            background-color: #004d66;
+        }
+        .menu-btn {
+            font-size: 1.5rem;
+            background-color: #004466;
+            color: white;
+            border: none;
+            padding: 1rem;
+            cursor: pointer;
+        }
+        .menu-btn:hover {
+            background-color: #00334d;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background: #00334d;
+            padding: 0.5rem 0;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+        }
+        nav a:hover {
+            background-color: #004d66;
+            border-radius: 5px;
+        }
+        .posts-section {
+            padding: 2rem;
+            background-color: #ffffff;
+        }
+        .post-card {
+            background-color: #e0f7fa;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .post-card h3 {
+            margin-bottom: 0.5rem;
+            color: #00796b;
+        }
+        .post-card p {
+            color: #333;
+        }
+        .donation-section {
+            background-color: #f0f4f8;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .donation-section h2 {
+            color: #005580;
+            margin-bottom: 1rem;
+        }
+        .donation-section p {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        .donation-button {
+            background-color: #0077b3;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .donation-button:hover {
+            background-color: #005580;
+        }
+        .footer {
+            background: #00334d;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+
+        /* Post Creation Section */
+
+.post-creation-section {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-creation-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.post-form .form-group {
+    margin-bottom: 15px;
+}
+
+.post-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.post-form input[type="text"],
+.post-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.post-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.post-form .submit-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.post-form .submit-button:hover {
+    background-color: #0056b3;
+}
