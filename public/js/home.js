@@ -46,28 +46,24 @@ document.addEventListener('click', function(event) {
 
 document.addEventListener("DOMContentLoaded", () => {
   // Initialize all comments containers to be collapsed
-  document.querySelectorAll(".comments-container").forEach((commentsContainer) => {
-    commentsContainer.style.maxHeight = "0px";
-    commentsContainer.style.padding = "0";
+  document.querySelectorAll(".comments-container").forEach((container) => {
+      container.style.display = "none";
   });
 
-  // Toggle comments container visibility
+  // Add click event listeners to all view-comments buttons
   document.querySelectorAll(".view-comments-button").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const commentsContainer = button.nextElementSibling;
-
-      if (commentsContainer.style.maxHeight === "0px" || !commentsContainer.style.maxHeight) {
-        // Expand the comments container
-        commentsContainer.style.maxHeight = commentsContainer.scrollHeight + "px";
-        commentsContainer.style.padding = "10px";
-        button.textContent = `Hide Comments (${commentsContainer.querySelectorAll(".comment").length})`;
-      } else {
-        // Collapse the comments container
-        commentsContainer.style.maxHeight = "0";
-        commentsContainer.style.padding = "0";
-        button.textContent = `View Comments (${commentsContainer.querySelectorAll(".comment").length})`;
-      }
-    });
+      button.addEventListener("click", function() {
+          const postId = this.getAttribute("data-post-id");
+          const commentsContainer = document.getElementById(`comments-${postId}`);
+          
+          if (commentsContainer.style.display === "none") {
+              commentsContainer.style.display = "block";
+              this.textContent = `Hide Comments (${commentsContainer.querySelectorAll(".comment").length})`;
+          } else {
+              commentsContainer.style.display = "none";
+              this.textContent = `View Comments (${commentsContainer.querySelectorAll(".comment").length})`;
+          }
+      });
   });
 });
 

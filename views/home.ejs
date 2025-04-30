@@ -43,7 +43,7 @@
         </ul>
     </nav>
 
-    <section class="post-creation-section" id="postCreationSection" style="display: none;">
+    <!-- <section class="post-creation-section" id="postCreationSection" style="display: none;">
         <h2>Create a New Post</h2>
         <form action="/create_post" method="POST" class="post-form">
             <div class="form-group">
@@ -56,91 +56,90 @@
             </div>
             <button type="submit" class="submit-button">Create Post</button>
         </form>
-    </section>
+    </section> -->
 
-    <section class="posts-section">
-        <h2>Recent Posts by Alumni and Students</h2>
-    
-        <!-- Post Creation Form -->
-        <div class="post-creation-container">
-            <section class="post-creation-section" id="postCreationSection" style="display: none;">
-                <h2>Create a New Post</h2>
-                <form action="/create_post" method="POST" class="post-form">
-                    <div class="form-group">
-                        <label for="postTitle">Title</label>
-                        <input type="text" id="postTitle" name="title" required placeholder="Enter post title">
-                    </div>
-                    <div class="form-group">
-                        <label for="postContent">Content</label>
-                        <textarea id="postContent" name="content" required placeholder="Write your post here"></textarea>
-                    </div>
-                    <button type="submit" class="submit-button">Create Post</button>
-                </form>
-            </section>
-        </div>
-    
-        <!-- Existing Posts -->
-        <div class="existing-posts-container">
-            <% if (posts.length > 0) { %>
-                <% posts.forEach(post => { %>
-                    <div class="post-card" data-post-id="<%= post.id %>">
-                        <h3><%= post.title %></h3>
-                        <p><%= post.content %></p>
-                        <small>— <strong><%= post.author_name %></strong> (<%= post.user_type %>, Batch of <%= post.batch_year %>)</small>
-                        <br>
-                        <small>Posted on <%= post.created_at %></small>
-    
-                        <!-- Delete Post Button (Visible only for the user's own posts) -->
-                        <% if (post.user_prn === user.prn) { %>
-                            <button class="delete-post-button" data-post-id="<%= post.id %>">Delete Post</button>
-                        <% } %>
-    
-                        <!-- Like Button -->
-                        <form action="/like_post/<%= post.id %>" method="POST" class="like-form" data-post-id="<%= post.id %>">
-                            <button type="submit" class="like-button">
-                                <% if (post.user_liked) { %>
-                                    Unlike
-                                <% } else { %>
-                                    Like
-                                <% } %> (<%= post.like_count %>)
-                            </button>
-                        </form>
-    
-                        <!-- Comment Section -->
-                        <div class="comments-section">
-                            <!-- Button to toggle comments -->
-                            <button class="view-comments-button" data-post-id="<%= post.id %>">
-                                Comments (<%= post.comment_count %>)
-                            </button>
-    
-                            <!-- Comments container, hidden by default -->
-                            <div class="comments-container" id="comments-<%= post.id %>">
-                                <% comments.filter(comment => comment.post_id === post.id).forEach(comment => { %>
-                                    <div class="comment" data-comment-id="<%= comment.id %>">
-                                        <p>
-                                            <strong><%= comment.student_name || comment.alumni_name %>:</strong> <%= comment.comment %>
-                                            <% if (comment.user_prn === user.prn) { %>
-                                                <!-- Delete button visible only for the user's own comments -->
-                                                <form action="/delete_comment/<%= comment.id %>" method="POST" class="delete-comment-form">
-                                                    <button type="submit" class="delete-comment-button">Delete</button>
-                                                </form>
-                                            <% } %>
-                                        </p>
-                                    </div>
-                                <% }); %>
-                            </div>
+<section class="posts-section">
+    <h2>Recent Posts by Alumni and Students</h2>
+
+    <!-- Post Creation Form -->
+    <div class="post-creation-container">
+        <section class="post-creation-section" id="postCreationSection" style="display: none;">
+            <h2>Create a New Post</h2>
+            <form action="/create_post" method="POST" class="post-form">
+                <div class="form-group">
+                    <label for="postTitle">Title</label>
+                    <input type="text" id="postTitle" name="title" required placeholder="Enter post title">
+                </div>
+                <div class="form-group">
+                    <label for="postContent">Content</label>
+                    <textarea id="postContent" name="content" required placeholder="Write your post here"></textarea>
+                </div>
+                <button type="submit" class="submit-button">Create Post</button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Existing Posts -->
+    <div class="existing-posts-container">
+        <% if (posts.length > 0) { %>
+            <% posts.forEach(post => { %>
+                <div class="post-card" data-post-id="<%= post.id %>">
+                    <h3><%= post.title %></h3>
+                    <p><%= post.content %></p>
+                    <small>— <strong><%= post.author_name %></strong> (<%= post.user_type %>, Batch of <%= post.batch_year %>)</small>
+                    <br>
+                    <small>Posted on <%= post.created_at %></small>
+
+                    <!-- Delete Post Button (Visible only for the user's own posts) -->
+                    <% if (post.user_prn === user.prn) { %>
+                        <button class="delete-post-button" data-post-id="<%= post.id %>">Delete Post</button>
+                    <% } %>
+
+                    <!-- Like Button -->
+                    <form action="/like_post/<%= post.id %>" method="POST" class="like-form" data-post-id="<%= post.id %>">
+                        <button type="submit" class="like-button">
+                            <% if (post.user_liked) { %>
+                                Unlike
+                            <% } else { %>
+                                Like
+                            <% } %> (<%= post.like_count %>)
+                        </button>
+                    </form>
+
+                    <!-- Comment Section -->
+                    <div class="comments-section">
+                        <button class="view-comments-button" data-post-id="<%= post.id %>">
+                            View Comments (<%= comments.filter(comment => comment.post_id === post.id).length %>)
+                        </button>
+
+                        <div class="comments-container" id="comments-<%= post.id %>">
+                            <% comments.filter(comment => comment.post_id === post.id).forEach(comment => { %>
+                                <div class="comment" data-comment-id="<%= comment.id %>">
+                                    <p>
+                                        <strong><%= comment.student_name || comment.alumni_name %>:</strong> 
+                                        <%= comment.comment %>
+                                        <% if (comment.user_prn === user.prn) { %>
+                                            <form action="/delete_comment/<%= comment.id %>" method="POST" class="delete-comment-form">
+                                                <button type="submit" class="delete-comment-button">Delete</button>
+                                            </form>
+                                        <% } %>
+                                    </p>
+                                </div>
+                            <% }); %>
+                            
                             <form action="/comment_post/<%= post.id %>" method="POST" class="comment-form" data-post-id="<%= post.id %>">
                                 <textarea name="comment" placeholder="Write a comment..." required></textarea>
                                 <button type="submit" class="comment-button">Comment</button>
                             </form>
                         </div>
                     </div>
-                <% }); %>
-            <% } else { %>
-                <h1>No posts in the database.</h1>
-            <% } %>
-        </div>
-    </section>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <h1>No posts in the database.</h1>
+        <% } %>
+    </div>
+</section>
 
     <section class="donation-section">
         <h2>Support the Legacy</h2>
