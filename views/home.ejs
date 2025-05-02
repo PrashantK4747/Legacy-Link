@@ -36,27 +36,13 @@
         <ul>
             <li><a href="/home">Home</a></li>
             <li><a href="#" onclick="togglePostForm()">Post Blog</a></li>
-            <li><a href="/profile">Profile</a></li>
+            <li><a href="/profile">Profile Changes</a></li>
             <li><a href="/events">Events</a></li>
             <li><a href="/alumni">Alumni Directory</a></li>
             <li><a href="/contact">Contact Us</a></li>
         </ul>
     </nav>
 
-    <!-- <section class="post-creation-section" id="postCreationSection" style="display: none;">
-        <h2>Create a New Post</h2>
-        <form action="/create_post" method="POST" class="post-form">
-            <div class="form-group">
-                <label for="postTitle">Title</label>
-                <input type="text" id="postTitle" name="title" required placeholder="Enter post title">
-            </div>
-            <div class="form-group">
-                <label for="postContent">Content</label>
-                <textarea id="postContent" name="content" required placeholder="Write your post here"></textarea>
-            </div>
-            <button type="submit" class="submit-button">Create Post</button>
-        </form>
-    </section> -->
 
 <section class="posts-section">
     <h2>Recent Posts by Alumni and Students</h2>
@@ -151,5 +137,132 @@
         <p>&copy; 2025 LegacyLink. All rights reserved.</p>
     </footer>
 
+    <div class="chatbot-toggle" id="chatbotToggle">
+        <button class="chatbot-button" onclick="toggleChatbot()">
+            <span class="chat-icon">💬</span>
+        </button>
+    </div>
+
+    <!-- Chatbot container -->
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-header">
+            <h3>LegacyLink Assistant</h3>
+            <button class="close-chat-btn" onclick="toggleChatbot()">×</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="bot-message">
+                <p>Hello! I'm your LegacyLink assistant. How can I help you today?</p>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatInput" placeholder="Type a message...">
+            <button id="sendMessage" onclick="sendChatMessage()">
+                <span class="send-icon">➤</span>
+            </button>
+        </div>
+    </div>
+
     <script src="/js/home.js"></script>
+
+    <script>
+        // Function to toggle chatbot visibility
+        function toggleChatbot() {
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            if (chatbotContainer.classList.contains('show-chatbot')) {
+                chatbotContainer.classList.remove('show-chatbot');
+            } else {
+                chatbotContainer.classList.add('show-chatbot');
+            }
+        }
+
+        // Replace the existing sendChatMessage function
+async function sendChatMessage() {
+    const chatInput = document.getElementById('chatInput');
+    const chatMessages = document.getElementById('chatbotMessages');
+    const message = chatInput.value.trim();
+    
+    if (message === '') return;
+
+    try {
+        chatInput.disabled = true;
+        
+        // Add user message with timestamp
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'user-message';
+        userMessageDiv.innerHTML = `
+            <div class="message-content">
+                <p>${message}</p>
+            </div>
+        `;
+        chatMessages.appendChild(userMessageDiv);
+        
+        // Add loading indicator
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'bot-message loading';
+        loadingDiv.innerHTML = `
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        `;
+        chatMessages.appendChild(loadingDiv);
+        
+        chatInput.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message })
+        });
+        
+        // Remove loading indicator
+        chatMessages.removeChild(loadingDiv);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        
+        // Add bot response with timestamp
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'bot-message';
+        botMessageDiv.innerHTML = `
+            <div class="message-content">
+                <p>${data.reply}</p>
+            </div>
+        `;
+        chatMessages.appendChild(botMessageDiv);
+        
+    } catch (error) {
+        console.error('Chat Error:', error);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'bot-message error';
+        errorDiv.innerHTML = `
+            <div class="message-content">
+                <p>Sorry, I encountered an error. Please try again.</p>
+                <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+            </div>
+        `;
+        chatMessages.appendChild(errorDiv);
+    } finally {
+        chatInput.disabled = false;
+        chatInput.focus();
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+        
+        // Add event listener for Enter key
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+    </script>
+    <script src="/js/chat.js"></script>
+
     <%- include('partials/home-footer') %>

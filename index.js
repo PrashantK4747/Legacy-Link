@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import session from "express-session";
 import dotenv from "dotenv";
+import chatbotRouter from './public/js/chatbot.js';
 
 dotenv.config();
 
@@ -13,6 +14,8 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(express.json());
+app.use('/', chatbotRouter);
 
 app.use(
   session({
@@ -52,6 +55,7 @@ app.get("/student_login", (req, res) => {
 app.get("/admin_login", (req, res) => {
   res.render("admin_login.ejs", { error: null });
 });
+
 
 // Student home route
 app.get("/student_home", async (req, res) => {
@@ -340,6 +344,115 @@ app.delete("/delete_post/:id", async (req, res) => {
   }
 });
 
+// ...existing code...
+
+// Profile page route
+app.get("/profile", async (req, res) => {
+  if (!req.session.user && !req.session.alumni) {
+      return res.redirect("/login");
+  }
+
+  try {
+      const user = req.session.user || req.session.alumni;
+      if (user.type === 'alumni') {
+          const result = await db.query(
+              "SELECT * FROM alumni WHERE prn = $1",
+              [user.prn]
+          );
+          if (result.rows.length > 0) {
+              res.render("profile.ejs", { user: { ...user, ...result.rows[0] } });
+          }
+      } else {
+          res.render("profile.ejs", { user });
+      }
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+  }
+});
+
+// Update password route
+app.post("/update-password", async (req, res) => {
+  if (!req.session.user && !req.session.alumni) {
+      return res.redirect("/login");
+  }
+
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const user = req.session.user || req.session.alumni;
+  const table = user.type === 'alumni' ? 'alumni' : 'students';
+
+  try {
+      // Verify current password
+      const result = await db.query(
+          `SELECT * FROM ${table} WHERE prn = $1 AND password = $2`,
+          [user.prn, currentPassword]
+      );
+
+      if (result.rows.length === 0) {
+          return res.render("profile.ejs", { 
+              user,
+              error: "Current password is incorrect"
+          });
+      }
+
+      if (newPassword !== confirmPassword) {
+          return res.render("profile.ejs", { 
+              user,
+              error: "New passwords do not match"
+          });
+      }
+
+      // Update password
+      await db.query(
+          `UPDATE ${table} SET password = $1 WHERE prn = $2`,
+          [newPassword, user.prn]
+      );
+
+      res.render("profile.ejs", { 
+          user,
+          success: "Password updated successfully"
+      });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+  }
+});
+
+// Update profile route (Alumni only)
+app.post("/update-profile", async (req, res) => {
+  if (!req.session.alumni) {
+      return res.redirect("/login");
+  }
+
+  const { currentPosition, company, location, email } = req.body;
+  const user = req.session.alumni;
+
+  try {
+      await db.query(
+          `UPDATE alumni 
+           SET current_position = $1, company = $2, location = $3, email = $4 
+           WHERE prn = $5`,
+          [currentPosition, company, location, email, user.prn]
+      );
+
+      // Update session with new information
+      req.session.alumni = {
+          ...user,
+          current_position: currentPosition,
+          company,
+          location,
+          email
+      };
+
+      res.render("profile.ejs", { 
+          user: req.session.alumni,
+          success: "Profile updated successfully"
+      });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+  }
+});
 
 
 //admin functionalities 
