@@ -1,5 +1,46 @@
 <%- include('partials/home-header') %>
 <body>
+    <header>
+        <button class="menu-btn" onclick="toggleMenu()">&#9776;</button>
+        <div class="branding">
+            <h1>LegacyLink</h1>
+            <span>Alumni Platform of Tatyasaheb Kore Institute of Engineering and Technology</span>
+        </div>
+        <div class="profile-pic" onclick="openProfileSidebar()"></div>
+    </header>
+
+    <% if (user) { %>
+        <div class="profile-sidebar" id="profileSidebar">
+            <button class="close-btn" onclick="closeProfileSidebar()">×</button>
+            <h2>Profile Information</h2>
+            <p>Name: <%= user.name %></p>
+            <p>Batch: <%= user.batch_year %></p>
+            <p>Department: <%= user.department %></p>
+            <p>Email: <%= user.email %></p>
+            <form action="/logout" method="POST" class="logout-form">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    <% } %>
+
+    <div class="menu-bar" id="menuBar">
+        <a href="/home">Home</a>
+        <a href="/home#posts">Post Blog</a>
+        <a href="/profile">Profile Changes</a>
+        <a href="/home#events">Events</a>
+        <a href="http://www.tkietwarana.ac.in/contact/">Contact Us</a>
+    </div>
+    
+    <nav>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/home#posts">Post Blog</a></li>
+            <li><a href="/profile">Profile Changes</a></li>
+            <li><a href="/home#events">Events</a></li>
+            <li><a href="http://www.tkietwarana.ac.in/contact/">Contact Us</a></li>
+        </ul>
+    </nav>
+    
     <div class="profile-container">
         <h2>Profile Settings</h2>
         
@@ -49,5 +90,30 @@
             </div>
         <% } %>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to redirect to home with specific section
+            function navigateToHomeSection(section) {
+                window.location.href = `/home#${section}`;
+            }
+    
+            // Add navigation functions
+            window.goToHomePosts = function() {
+                navigateToHomeSection('posts');
+            };
+    
+            window.goToHomeEvents = function() {
+                navigateToHomeSection('events');
+            };
+    
+            // Optional: Handle direct hash navigation if needed
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1); // Remove the # symbol
+                if (hash === 'posts' || hash === 'events') {
+                    navigateToHomeSection(hash);
+                }
+            }
+        });
+    </script>
 </body>
 <%- include('partials/footer') %>

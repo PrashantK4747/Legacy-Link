@@ -56,6 +56,80 @@ app.get("/admin_login", (req, res) => {
   res.render("admin_login.ejs", { error: null });
 });
 
+// Add this route after your other route definitions
+
+app.get("/home", async (req, res) => {
+  const user = req.session.user || req.session.alumni;
+  
+  if (!user) {
+    return res.redirect("/");
+  }
+
+  try {
+    // Fix the table name (alumni instead of alumnis)
+    const userResult = await db.query(
+      `SELECT * FROM ${user.type === 'alumni' ? 'alumni' : 'students'} WHERE prn = $1`,
+      [user.prn]
+    );
+
+    // Fetch posts with like and comment counts
+    const postsResult = await db.query(`
+      SELECT 
+        posts.*,
+        COUNT(DISTINCT likes.id) AS like_count,
+        COUNT(DISTINCT comments.id) AS comment_count,
+        EXISTS (
+          SELECT 1 FROM likes WHERE likes.post_id = posts.id AND likes.user_prn = $1
+        ) AS user_liked
+      FROM posts
+      LEFT JOIN likes ON posts.id = likes.post_id
+      LEFT JOIN comments ON posts.id = comments.post_id
+      GROUP BY posts.id
+      ORDER BY posts.created_at DESC
+    `, [user.prn]);
+
+    // Fetch comments
+    const commentsResult = await db.query(`
+      SELECT comments.*, students.name AS student_name, alumni.name AS alumni_name 
+      FROM comments
+      LEFT JOIN students ON comments.user_prn = students.prn
+      LEFT JOIN alumni ON comments.user_prn = alumni.prn
+      ORDER BY comments.created_at ASC
+    `);
+
+    // Fetch events with registration status
+const eventsResult = await db.query(`
+  SELECT 
+      events.*,
+      COUNT(DISTINCT event_registrations.id) as registration_count,
+      EXISTS (
+          SELECT 1 FROM event_registrations 
+          WHERE event_registrations.event_id = events.id 
+          AND event_registrations.user_prn = $1
+      ) as user_registered,
+      COALESCE(s.name, a.name) as creator_name,
+      COALESCE(s.batch_year, a.batch_year) as creator_batch_year
+  FROM events
+  LEFT JOIN event_registrations ON events.id = event_registrations.event_id
+  LEFT JOIN students s ON events.organizer_prn = s.prn AND events.organizer_type = 'student'
+  LEFT JOIN alumni a ON events.organizer_prn = a.prn AND events.organizer_type = 'alumni'
+  GROUP BY events.id, s.name, a.name, s.batch_year, a.batch_year
+  ORDER BY events.event_date ASC
+`, [user.prn]);
+
+    // Render the home page with all necessary data
+    res.render("home", {
+      user: userResult.rows[0],
+      posts: postsResult.rows,
+      comments: commentsResult.rows,
+      events: eventsResult.rows
+    });
+
+  } catch (err) {
+    console.error("Error in /home route:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // Student home route
 app.get("/student_home", async (req, res) => {
@@ -78,21 +152,39 @@ app.get("/student_home", async (req, res) => {
       `, [req.session.user.prn]);
 
       const commentsResult = await db.query(`
-        SELECT 
-          comments.*, 
-          students.name AS student_name, 
-          alumni.name AS alumni_name 
+        SELECT comments.*, students.name AS student_name, alumni.name AS alumni_name 
         FROM comments
         LEFT JOIN students ON comments.user_prn = students.prn
         LEFT JOIN alumni ON comments.user_prn = alumni.prn
         ORDER BY comments.created_at ASC
       `);
 
+      // Add this query to fetch events
+      const eventsResult = await db.query(`
+        SELECT 
+            events.*,
+            COUNT(DISTINCT event_registrations.id) as registration_count,
+            EXISTS (
+                SELECT 1 FROM event_registrations 
+                WHERE event_registrations.event_id = events.id 
+                AND event_registrations.user_prn = $1
+            ) as user_registered,
+            COALESCE(s.name, a.name) as creator_name,
+            COALESCE(s.batch_year, a.batch_year) as creator_batch_year
+        FROM events
+        LEFT JOIN event_registrations ON events.id = event_registrations.event_id
+        LEFT JOIN students s ON events.organizer_prn = s.prn AND events.organizer_type = 'student'
+        LEFT JOIN alumni a ON events.organizer_prn = a.prn AND events.organizer_type = 'alumni'
+        GROUP BY events.id, s.name, a.name, s.batch_year, a.batch_year
+        ORDER BY events.event_date ASC
+    `, [req.session.user.prn]); 
+
       if (studentResult.rows.length > 0) {
         res.render("home.ejs", {
           user: studentResult.rows[0],
           posts: postsResult.rows,
           comments: commentsResult.rows,
+          events: eventsResult.rows  // Add this line
         });
       } else {
         res.redirect("/student_login");
@@ -106,7 +198,7 @@ app.get("/student_home", async (req, res) => {
   }
 });
 
-// Alumni home route
+// Modified alumni home route
 app.get("/alumni_home", async (req, res) => {
   if (req.session.alumni) {
     try {
@@ -127,21 +219,39 @@ app.get("/alumni_home", async (req, res) => {
       `, [req.session.alumni.prn]);
 
       const commentsResult = await db.query(`
-        SELECT 
-          comments.*, 
-          students.name AS student_name, 
-          alumni.name AS alumni_name 
+        SELECT comments.*, students.name AS student_name, alumni.name AS alumni_name 
         FROM comments
         LEFT JOIN students ON comments.user_prn = students.prn
         LEFT JOIN alumni ON comments.user_prn = alumni.prn
         ORDER BY comments.created_at ASC
       `);
 
+      // Add this query to fetch events
+      const eventsResult = await db.query(`
+        SELECT 
+            events.*,
+            COUNT(DISTINCT event_registrations.id) as registration_count,
+            EXISTS (
+                SELECT 1 FROM event_registrations 
+                WHERE event_registrations.event_id = events.id 
+                AND event_registrations.user_prn = $1
+            ) as user_registered,
+            COALESCE(s.name, a.name) as creator_name,
+            COALESCE(s.batch_year, a.batch_year) as creator_batch_year
+        FROM events
+        LEFT JOIN event_registrations ON events.id = event_registrations.event_id
+        LEFT JOIN students s ON events.organizer_prn = s.prn AND events.organizer_type = 'student'
+        LEFT JOIN alumni a ON events.organizer_prn = a.prn AND events.organizer_type = 'alumni'
+        GROUP BY events.id, s.name, a.name, s.batch_year, a.batch_year
+        ORDER BY events.event_date ASC
+    `, [req.session.alumni.prn]); 
+
       if (alumniResult.rows.length > 0) {
         res.render("home.ejs", {
           user: alumniResult.rows[0],
           posts: postsResult.rows,
           comments: commentsResult.rows,
+          events: eventsResult.rows  // Add this line
         });
       } else {
         res.redirect("/alumni_login");
@@ -152,6 +262,149 @@ app.get("/alumni_home", async (req, res) => {
     }
   } else {
     res.redirect("/alumni_login");
+  }
+});
+
+// Event registration route
+app.post("/event/:id/register", async (req, res) => {
+  const eventId = req.params.id;
+  const user = req.session.user || req.session.alumni;
+
+  if (!user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    await db.query(
+      "INSERT INTO event_registrations (event_id, user_prn, user_type, registered_at) VALUES ($1, $2, $3, NOW())",
+      [eventId, user.prn, user.type]
+    );
+
+    // Get updated registration count
+    const countResult = await db.query(
+      "SELECT COUNT(*) as count FROM event_registrations WHERE event_id = $1",
+      [eventId]
+    );
+
+    res.json({ 
+      success: true, 
+      registration_count: countResult.rows[0].count 
+    });
+  } catch (err) {
+    console.error("Error registering for event:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Event unregistration route
+app.post("/event/:id/unregister", async (req, res) => {
+  const eventId = req.params.id;
+  const user = req.session.user || req.session.alumni;
+
+  if (!user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    await db.query(
+      "DELETE FROM event_registrations WHERE event_id = $1 AND user_prn = $2",
+      [eventId, user.prn]
+    );
+
+    // Get updated registration count
+    const countResult = await db.query(
+      "SELECT COUNT(*) as count FROM event_registrations WHERE event_id = $1",
+      [eventId]
+    );
+
+    res.json({ 
+      success: true, 
+      registration_count: countResult.rows[0].count 
+    });
+  } catch (err) {
+    console.error("Error unregistering from event:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Add after other routes and before app.listen
+
+// Create event route
+app.post("/create_event", async (req, res) => {
+  const { title, description, event_date, location } = req.body;
+  const user = req.session.user || req.session.alumni;
+
+  if (!user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    // Insert the new event into the database
+    await db.query(
+      `INSERT INTO events (
+        title, 
+        description, 
+        event_date, 
+        location, 
+        organizer_prn, 
+        organizer_type,
+        created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+      [
+        title,
+        description,
+        event_date,
+        location,
+        user.prn,
+        user.type
+      ]
+    );
+
+    // Redirect back to the appropriate home page
+    const redirectPath = user.type === 'student' ? '/student_home' : '/alumni_home';
+    res.redirect(redirectPath);
+  } catch (err) {
+    console.error("Error creating event:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Delete event route
+app.delete("/event/:id", async (req, res) => {
+  const eventId = req.params.id;
+  const user = req.session.user || req.session.alumni;
+
+  if (!user) {
+      return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+      // First check if user is authorized to delete this event
+      const eventCheck = await db.query(
+          "SELECT * FROM events WHERE id = $1 AND organizer_prn = $2",
+          [eventId, user.prn]
+      );
+
+      if (eventCheck.rows.length === 0) {
+          return res.status(403).json({ error: "You are not authorized to delete this event" });
+      }
+
+      // Delete all registrations first (due to foreign key constraints)
+      await db.query(
+          "DELETE FROM event_registrations WHERE event_id = $1",
+          [eventId]
+      );
+
+      // Then delete the event
+      await db.query(
+          "DELETE FROM events WHERE id = $1",
+          [eventId]
+      );
+
+      res.json({ success: true });
+  } catch (err) {
+      console.error("Error deleting event:", err);
+      res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -315,36 +568,57 @@ app.post("/create_post", async (req, res) => {
 });
 
 // Route to delete a post
-app.delete("/delete_post/:id", async (req, res) => {
-  const postId = req.params.id;
-  const user = req.session.user || req.session.alumni || req.session.admin;
-
-  if (!user) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
+app.delete('/delete_post/:id', async (req, res) => {
   try {
-    // Verify that the post belongs to the user
-    const postResult = await db.query(
-      "SELECT * FROM posts WHERE id = $1 AND user_prn = $2",
-      [postId, user.prn || user.username]
-    );
+      const postId = parseInt(req.params.id);
+      const user = req.session.user || req.session.alumni;
 
-    if (postResult.rows.length === 0) {
-      return res.status(403).json({ error: "You are not authorized to delete this post." });
-    }
+      // Validate postId
+      if (!postId || isNaN(postId)) {
+          return res.status(400).json({ 
+              success: false, 
+              error: 'Invalid post ID' 
+          });
+      }
 
-    // Delete the post
-    await db.query("DELETE FROM posts WHERE id = $1", [postId]);
+      // Validate user session
+      if (!user) {
+          return res.status(401).json({ 
+              success: false, 
+              error: 'Not authorized' 
+          });
+      }
 
-    res.json({ success: true, message: "Post deleted successfully." });
-  } catch (err) {
-    console.error("Error deleting post:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+      // Check if post exists and belongs to user
+      const postCheck = await db.query(
+          'SELECT * FROM posts WHERE id = $1 AND user_prn = $2',
+          [postId, user.prn]
+      );
+
+      if (postCheck.rows.length === 0) {
+          return res.status(403).json({ 
+              success: false, 
+              error: 'Not authorized to delete this post' 
+          });
+      }
+
+      // Delete related records first
+      await db.query('DELETE FROM comments WHERE post_id = $1', [postId]);
+      await db.query('DELETE FROM likes WHERE post_id = $1', [postId]);
+      
+      // Delete the post
+      await db.query('DELETE FROM posts WHERE id = $1', [postId]);
+
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).json({ 
+          success: false, 
+          error: 'Database error' 
+      });
   }
 });
 
-// ...existing code...
 
 // Profile page route
 app.get("/profile", async (req, res) => {

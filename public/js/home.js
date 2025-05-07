@@ -44,6 +44,37 @@ document.addEventListener('click', function(event) {
     }
 });
 
+// Add this in the existing script tag, after the register-button event listeners
+
+// Handle event deletion
+document.querySelectorAll('.delete-event-button').forEach(button => {
+  button.addEventListener('click', async function() {
+      if (confirm('Are you sure you want to delete this event?')) {
+          const eventId = this.dataset.eventId;
+          try {
+              const response = await fetch(`/event/${eventId}`, {
+                  method: 'DELETE',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  }
+              });
+              
+              if (response.ok) {
+                  // Remove the event card from the DOM
+                  const eventCard = this.closest('.event-card');
+                  eventCard.remove();
+              } else {
+                  const errorData = await response.json();
+                  alert(errorData.error || 'Failed to delete event');
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              alert('Failed to delete event');
+          }
+      }
+  });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   // Initialize all comments containers to be collapsed
   document.querySelectorAll(".comments-container").forEach((container) => {
@@ -220,3 +251,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     });
+
+    // Add this function for post deletion confirmation
+    function confirmDeletePost(postId) {
+      const confirmed = confirm('Are you sure you want to delete this post?');
+      
+      if (!confirmed) {
+          return false; // Exit if user clicks Cancel
+      }
+  
+      // Only proceed with deletion if user confirmed
+      fetch(`/delete_post/${postId}`, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+              if (postElement) {
+                  postElement.remove();
+              }
+          } else {
+              alert('Error deleting post: ' + (data.error || 'Unknown error'));
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('Error deleting post');
+      });
+  }

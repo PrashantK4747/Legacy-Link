@@ -24,12 +24,11 @@
     <% } %>
 
     <div class="menu-bar" id="menuBar">
-        <a href="#home">Home</a>
-        <a href="#post-blog">Post Blog</a>
-        <a href="#profile">Profile</a>
-        <a href="#events">Events</a>
-        <a href="#alumni">Alumni Directory</a>
-        <a href="#contact">Contact Us</a>
+        <a href="/home">Home</a>
+        <a href="#" onclick="togglePostForm()">Post Blog</a>
+        <a href="/profile">Profile Changes</a>
+        <a href="#" onclick="showEvents()">Events</a>
+        <a href="http://www.tkietwarana.ac.in/contact/">Contact Us</a>
     </div>
 
     <nav>
@@ -37,9 +36,8 @@
             <li><a href="/home">Home</a></li>
             <li><a href="#" onclick="togglePostForm()">Post Blog</a></li>
             <li><a href="/profile">Profile Changes</a></li>
-            <li><a href="/events">Events</a></li>
-            <li><a href="/alumni">Alumni Directory</a></li>
-            <li><a href="/contact">Contact Us</a></li>
+            <li><a href="#" onclick="showEvents()">Events</a></li>
+            <li><a href="http://www.tkietwarana.ac.in/contact/">Contact Us</a></li>
         </ul>
     </nav>
 
@@ -77,8 +75,8 @@
                     <small>Posted on <%= post.created_at %></small>
 
                     <!-- Delete Post Button (Visible only for the user's own posts) -->
-                    <% if (post.user_prn === user.prn) { %>
-                        <button class="delete-post-button" data-post-id="<%= post.id %>">Delete Post</button>
+                    <% if (post.user_prn === user.prn && post.id) { %>
+                        <button class="delete-post-button" onclick="confirmDeletePost('<%= post.id %>'); return false;">Delete Post</button>
                     <% } %>
 
                     <!-- Like Button -->
@@ -125,6 +123,80 @@
             <h1>No posts in the database.</h1>
         <% } %>
     </div>
+</section>
+
+<section class="events-section" style="display: none;">
+    <div class="events-section-header">
+        <h2>Upcoming Events</h2>
+        <button onclick="toggleEventForm()" class="create-event-btn">Create Event</button>
+    </div>
+    <!-- Event Creation Form -->
+    <div class="event-creation-container">
+        <section class="event-creation-section" id="eventCreationSection" style="display: none;">
+            <h2>Create a New Event</h2>
+            <form action="/create_event" method="POST" class="event-form">
+                <div class="form-group">
+                    <label for="eventTitle">Title</label>
+                    <input type="text" id="eventTitle" name="title" required placeholder="Enter event title">
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" name="description" required placeholder="Write event details here"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Event Date</label>
+                    <input type="datetime-local" id="eventDate" name="event_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">Location</label>
+                    <input type="text" id="eventLocation" name="location" required placeholder="Enter event location">
+                </div>
+                <button type="submit" class="submit-button">Create Event</button>
+            </form>
+        </section>
+    </div>
+
+<div class="existing-events-container">
+    <% if (events && events.length > 0) { %>
+        <% events.forEach(event => { %>
+            <div class="event-card" data-event-id="<%= event.id %>">
+                <div class="event-header">
+                    <h3><%= event.title %></h3>
+                    <div class="event-meta">
+                        <small>Created by <strong><%= event.creator_name %></strong> 
+                            (<%= event.organizer_type %>, Batch of <%= event.creator_batch_year %>)</small>
+                        <br>
+                        <small>Posted on <%= new Date(event.created_at).toLocaleDateString() %></small>
+                    </div>
+                </div>
+                
+                <div class="event-content">
+                    <p><%= event.description %></p>
+                    <div class="event-details">
+                        <p><i class="far fa-calendar"></i> <strong>Date:</strong> 
+                            <%= new Date(event.event_date).toLocaleString() %></p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> 
+                            <%= event.location %></p>
+                    </div>
+                </div>
+
+                <div class="event-actions">
+                    <% if (user && event.organizer_prn === user.prn) { %>
+                        <button class="delete-event-button" data-event-id="<%= event.id %>">Delete Event</button>
+                    <% } %>
+
+                    <button class="register-button <%= event.user_registered ? 'registered' : '' %>" 
+                            data-event-id="<%= event.id %>">
+                        <%= event.user_registered ? 'Unregister' : 'Register' %>
+                        (<span class="registration-count"><%= event.registration_count %></span>)
+                    </button>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p class="no-events">No upcoming events.</p>
+    <% } %>
+</div>
 </section>
 
     <section class="donation-section">
@@ -261,6 +333,118 @@ async function sendChatMessage() {
                 sendChatMessage();
             }
         });
+
+
+    // Function to toggle post form
+    function togglePostForm() {
+        document.querySelector('.posts-section').style.display = 'block';
+        document.querySelector('.events-section').style.display = 'none';
+        const postForm = document.getElementById('postCreationSection');
+        postForm.style.display = postForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // ...existing code...
+
+function showPosts() {
+    document.querySelector('.posts-section').style.display = 'block';
+    document.querySelector('.events-section').style.display = 'none';
+    // Hide post creation form when switching views
+    document.getElementById('postCreationSection').style.display = 'none';
+}
+
+function showEvents() {
+    document.querySelector('.posts-section').style.display = 'none';
+    document.querySelector('.events-section').style.display = 'block';
+}
+
+// Handle hash-based navigation
+window.addEventListener('DOMContentLoaded', function() {
+    // Check hash on page load
+    if (window.location.hash === '#posts') {
+        showPosts();
+    } else if (window.location.hash === '#events') {
+        showEvents();
+    }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', function() {
+        if (window.location.hash === '#posts') {
+            showPosts();
+        } else if (window.location.hash === '#events') {
+            showEvents();
+        }
+    });
+});
+
+    // Function to toggle event form
+    function toggleEventForm() {
+        const eventForm = document.getElementById('eventCreationSection');
+        eventForm.style.display = eventForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Initialize page state on load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default view to posts
+        showPosts();
+        
+        // Add click handlers for navigation
+        document.querySelectorAll('a[href="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default anchor behavior
+            });
+        });
+    });
+
+    // Add this to your existing DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
+    
+    // Handle hash-based navigation
+    if (window.location.hash === '#posts') {
+        showPosts();
+    } else if (window.location.hash === '#events') {
+        showEvents();
+    }
+    
+    // Handle hash changes
+    window.addEventListener('hashchange', function() {
+        if (window.location.hash === '#posts') {
+            showPosts();
+        } else if (window.location.hash === '#events') {
+            showEvents();
+        }
+    });
+});
+
+            
+            // Event registration toggle
+            document.querySelectorAll('.register-button').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const eventId = this.dataset.eventId;
+                    const isRegistered = this.classList.contains('registered');
+                    const countSpan = this.querySelector('.registration-count');
+                    
+                    try {
+                        const response = await fetch(`/event/${eventId}/${isRegistered ? 'unregister' : 'register'}`, {
+                            method: 'POST'
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.classList.toggle('registered');
+                            this.textContent = `${isRegistered ? 'Register' : 'Unregister'} (${data.registration_count})`;
+                            this.style.backgroundColor = isRegistered ? '#4CAF50' : '#f44336';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+            
+            // By default, show posts section when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                showPosts();
+            });
 
     </script>
     <script src="/js/chat.js"></script>
