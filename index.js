@@ -26,19 +26,15 @@ app.use(
 );
 
 // PostgreSQL database connection
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DATABASE,
-  password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT,
+const db = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     require: true,
     rejectUnauthorized: false
   },
-  // Add these options to force IPv4
-  family: 4,
-  keepAlive: true
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000
 });
 
 db.connect()
