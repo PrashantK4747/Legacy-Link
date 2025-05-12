@@ -26,7 +26,7 @@ app.use(
 );
 
 // PostgreSQL database connection
-const db = new pg.Pool({  // Changed from pg.Client to pg.Pool
+const db = new pg.Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
@@ -36,18 +36,17 @@ const db = new pg.Pool({  // Changed from pg.Client to pg.Pool
     require: true,
     rejectUnauthorized: false
   },
+  // Add these options to fix IPv6 issues
   connectionTimeoutMillis: 5000,
-  max: 20
+  max: 20,
+  // Force IPv4
+  family: 4
 });
 
-db.connect()
-  .then(() => {
-    console.log("Connected to PostgreSQL");
-  })
-  .catch((err) => {
-    console.error("Database connection error:", err);
-    process.exit(1); // Exit if cannot connect
-  });
+db.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
 
 app.set("view engine", "ejs");
 
