@@ -26,6 +26,7 @@ app.use(
 );
 
 // PostgreSQL database connection
+// PostgreSQL database connection
 const db = new pg.Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
@@ -36,15 +37,21 @@ const db = new pg.Pool({
     require: true,
     rejectUnauthorized: false
   },
-  // Add these options to fix IPv6 issues
-  connectionTimeoutMillis: 5000,
-  max: 20,
-  // Force IPv4
-  family: 4
+  // Force IPv4 DNS resolution
+  family: 4,
+  // Connection handling
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
+  max: 20
+});
+
+// Add connection error handling
+db.on('connect', () => {
+  console.log('Database connected successfully');
 });
 
 db.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+  console.error('Database connection error:', err);
   process.exit(-1);
 });
 
