@@ -26,7 +26,7 @@ app.use(
 );
 
 // PostgreSQL database connection
-const db = new pg.Client({
+const db = new pg.Pool({  // Changed from pg.Client to pg.Pool
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
@@ -34,13 +34,20 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
   ssl: {
     require: true,
-    rejectUnauthorized: false 
-  }
+    rejectUnauthorized: false
+  },
+  connectionTimeoutMillis: 5000,
+  max: 20
 });
 
 db.connect()
-  .then(() => console.log("Connected to PostgreSQL"))
-  .catch((err) => console.error("Database connection error:", err));
+  .then(() => {
+    console.log("Connected to PostgreSQL");
+  })
+  .catch((err) => {
+    console.error("Database connection error:", err);
+    process.exit(1); // Exit if cannot connect
+  });
 
 app.set("view engine", "ejs");
 
