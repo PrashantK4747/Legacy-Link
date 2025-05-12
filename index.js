@@ -8,7 +8,7 @@ import chatbotRouter from './public/js/chatbot.js';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 // Middleware setup
 app.use(bodyParser.json());
@@ -26,8 +26,7 @@ app.use(
 );
 
 // PostgreSQL database connection
-// PostgreSQL database connection
-const db = new pg.Pool({
+const db = new pg.Client({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
@@ -37,23 +36,14 @@ const db = new pg.Pool({
     require: true,
     rejectUnauthorized: false
   },
-  // Force IPv4 DNS resolution
+  // Add these options to force IPv4
   family: 4,
-  // Connection handling
-  connectionTimeoutMillis: 10000,
-  idleTimeoutMillis: 30000,
-  max: 20
+  keepAlive: true
 });
 
-// Add connection error handling
-db.on('connect', () => {
-  console.log('Database connected successfully');
-});
-
-db.on('error', (err) => {
-  console.error('Database connection error:', err);
-  process.exit(-1);
-});
+db.connect()
+  .then(() => console.log("Connected to PostgreSQL"))
+  .catch((err) => console.error("Database connection error:", err));
 
 app.set("view engine", "ejs");
 
