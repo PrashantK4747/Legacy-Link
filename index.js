@@ -19,7 +19,7 @@ app.use('/', chatbotRouter);
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'abc',
     resave: false,
     saveUninitialized: true,
   })
@@ -32,11 +32,7 @@ const db = new pg.Client({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false
-  },
-  // Add these options to force IPv4
+  ssl: false, // Fully disable SSL for local development
   family: 4,
   keepAlive: true
 });

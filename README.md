@@ -1,84 +1,140 @@
-💼 LegacyLink
-LegacyLink is a platform designed to connect alumni and students of Tatyasaheb Kore Institute of Engineering and Technology.
+# LegacyLink
 
-🚀 Complete Guide to Set Up and Run LegacyLink Project
-📦 Prerequisites Installation
+LegacyLink is a comprehensive web application designed to bridge the gap between alumni and current students of Tatyasaheb Kore Institute of Engineering and Technology, fostering meaningful connections and knowledge sharing within the educational community.
+
+## � Features
+
+- **Multi-User Authentication**
+  - Student Login
+  - Alumni Login
+  - Admin Dashboard
+
+- **Admin Features**
+  - Add/Manage Students
+  - Add/Manage Alumni
+  - Bulk Import Feature
+  - View Complete Lists
+
+- **Interactive Interface**
+  - Responsive Design
+  - Modern UI/UX
+  - Real-time Chat Feature with Gemini AI
+
+## 💻 Tech Stack
+
+- **Frontend**
+  - HTML5
+  - CSS3/SCSS
+  - JavaScript
+  - EJS (Embedded JavaScript Templates)
+
+- **Backend**
+  - Node.js
+  - Express.js
+
+- **AI Integration**
+  - Google Gemini AI for Chatbot
+
+## 📁 Project Structure
+
+```
+LegacyLink/
+├── assets/           # Core assets
+├── public/           # Public assets
+│   ├── css/         # Stylesheets
+│   ├── img/         # Images
+│   ├── js/          # JavaScript files
+│   └── scss/        # SCSS source files
+├── views/           # EJS templates
+│   ├── admin/       # Admin panel views
+│   └── partials/    # Reusable view components
+└── index.js         # Application entry point
+```
+
+## 🛠️ Installation
+
 1. Install Node.js
-Download from: https://nodejs.org/
+   - Download from: https://nodejs.org/
+   - Install the LTS version
+   - Verify installation:
+     ```bash
+     node --version
+     npm --version
+     ```
 
-Install the LTS version
+2. Clone the repository
+   ```bash
+   git clone https://github.com/PrashantK4747/Legacy-Link.git
+   cd LegacyLink
+   ```
 
-Verify installation:
+3. Install dependencies
+   ```bash
+   npm install
+   ```
 
-bash
-Copy
-Edit
-node --version
-npm --version
-2. Install PostgreSQL and pgAdmin
-Download from: https://www.postgresql.org/download/windows/
+4. Configure environment variables
+   - Create a `.env` file in the root directory:
+     ```env
+     PORT=3000
+     MONGODB_URI=your_mongodb_connection_string
+     GEMINI_API_KEY=your_gemini_api_key
+     ```
 
-Install and remember your superuser password during setup
+5. Start the application
+   ```bash
+   npm start
+   ```
 
-🛠️ Project Setup
-1. Clone the Repository
-bash
-Copy
-Edit
-# Create a directory for your projects
-mkdir CollegeProjects
-cd CollegeProjects
+## 👥 User Roles
 
-# Clone your repository
-git clone https://github.com/yourusername/LegacyLink.git
-cd LegacyLink
-2. Install Dependencies
-bash
-Copy
-Edit
-npm install
-🗃️ Database Setup
-1. Open pgAdmin
-Launch pgAdmin
+1. **Admin**
+   - Manage student and alumni accounts
+   - Import data in bulk
+   - View and manage user lists
 
-Connect to PostgreSQL server using your superuser credentials
+2. **Alumni**
+   - Create and manage profile
+   - Connect with students
+   - Share experiences and knowledge
 
-2. Create Database
-Right-click on Databases
+3. **Students**
+   - Access alumni profiles
+   - Interact through chat
+   - Learn from alumni experiences
 
-Select Create > Database
+## ✨ Current Features
 
-Name the database: legacylink
+- ✅ User authentication (Student/Alumni)
+- 📝 Profile creation and management
+- 💬 AI-powered chatbot integration
+- 👥 Alumni-student connection
+- 🔍 Search and filter profiles
+- 📊 Admin dashboard
 
-🔐 Environment Setup
-1. Create .env File
-In the root of the project, create a .env file:
+## � Upcoming Features
 
-bash
-Copy
-Edit
-touch .env
-2. Add the Following Environment Variables
-env
-Copy
-Edit
-SESSION_SECRET="TOPSECRETWORD"
-PG_USER="postgres"
-PG_HOST="localhost"
-PG_DATABASE="legacylink"
-PG_PASSWORD="your_postgres_password"
-PG_PORT="5432"
-✨ Features
-✅ User authentication (Student/Alumni)
+- 📧 Direct messaging between alumni and students
+- � Mobile responsive design improvements
+- 🎯 Job opportunity posting
+- � Analytics dashboard
 
-📝 Post creation and display
+## 🤝 Contributing
 
-❤️ Like and 💬 comment functionality
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-👤 Profile management
+## 👏 Acknowledgments
 
-📧 Alumni-student connection (coming soon!)
+- Tatyasaheb Kore Institute of Engineering and Technology for their support
+- All contributors who have helped this project grow
+- Open source community for various tools and libraries used
 
-🔍 Search and filter posts (coming soon!)
+---
 
-📂 Admin dashboard (planned)
+## Contact
+
+For questions or suggestions, open an issue or contact [prashantk4747@gmail.com]
