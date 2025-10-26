@@ -76,9 +76,13 @@ LegacyLink/
 4. Configure environment variables
    - Create a `.env` file in the root directory:
      ```env
-     PORT=3000
-     MONGODB_URI=your_mongodb_connection_string
-     GEMINI_API_KEY=your_gemini_api_key
+     SESSION_SECRET="Your Own Secret key"
+     PG_USER="Database User Name (like: postgre)"
+     PG_HOST="localhost"
+     PG_DATABASE="Database Name (Like: legacylink)"
+     PG_PASSWORD="Your Own Password"
+     PG_PORT="Your Port Number"
+
      ```
 
 5. Start the application
@@ -138,3 +142,4 @@ LegacyLink/
 ## Contact
 
 For questions or suggestions, open an issue or contact [prashantk4747@gmail.com]
+
